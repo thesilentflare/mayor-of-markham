@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 
-const Create = () => {
+const Create = ({ location }) => {
     const [name, setName] = useState('');
     const [room, setRoom] = useState('');
 
@@ -17,7 +17,7 @@ const Create = () => {
             {/* <div>
               <input placeholder="Room Code" className="joinInput mt-20" type="text" onChange={(event) => setRoom(event.target.value)} />
             </div> */}
-            <Link onClick={e => (!name) ? e.preventDefault() : null} to={`/lobby?name=${name}&room=${room}`}>
+            <Link onClick={e => (!name) ? e.preventDefault() : null} to={`/lobby?room=${room}&name=${name}`}>
               <button className={'button mt-20'} type="submit">Create New Lobby</button>
             </Link>
           </div>

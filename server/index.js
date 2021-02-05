@@ -1,23 +1,17 @@
 const express = require("express");
-const http = require("http");
 const socketIO = require("socket.io");
+const http = require("http");
 
-// our localhost port
-const port = process.env.PORT || 5000;
+const { addPlayer, removePlayer, getPlayer, getPlayersInRoom } = require("./players");
+
+const PORT = process.env.PORT || 5000;
+const router = require("./router");
 
 const app = express();
 
 // our server instance
 const server = http.createServer(app);
 
-const {
-	addPlayer,
-	removePlayer,
-	getPlayer,
-	getPlayersInRoom,
-} = require("./players");
-
-// This creates our socket using the instance of the server
 const io = socketIO(server, {
 	cors: {
 		origin: "*",
@@ -26,53 +20,35 @@ const io = socketIO(server, {
 	},
 });
 
-// This is what the socket.io syntax is like, we will work this later
-io.on("connect", (socket) => {
-	socket.on("join", ({ name, room }, callback) => {
+io.on("connection", (socket) => {
+	socket.on("join", ({ name, room }, cb) => {
+		console.log(name, room);
 		const { error, player } = addPlayer({ id: socket.id, name, room });
-
-		if (error) return callback(error);
-
-		socket.join(player.room);
+		if (error) return cb(error);
 
 		socket.emit("message", {
 			player: "admin",
-			text: `${player.name}, welcome to room ${player.room}.`,
+			text: `Welcome ${player.name} to ${player.room}`,
 		});
 		socket.broadcast
 			.to(player.room)
-			.emit("message", { player: "admin", text: `${player.name} has joined!` });
+			.emit("message", { player: "admin", text: `${player.name} has joined` });
+		socket.join(player.room);
 
-		io.to(player.room).emit("roomData", {
-			room: player.room,
-			players: getPlayersInRoom(player.room),
-		});
-
-		callback();
+		cb();
 	});
 
-	socket.on("sendMessage", (message, callback) => {
+	socket.on("sendMsg", (msg, cb) => {
 		const player = getPlayer(socket.id);
-
-		io.to(player.room).emit("message", { player: player.name, text: message });
-
-		callback();
+		io.to(player.room).emit("message", { player: player.name, text: msg });
+		cb();
 	});
 
 	socket.on("disconnect", () => {
-		const player = removePlayer(socket.id);
-
-		if (player) {
-			io.to(player.room).emit("message", {
-				player: "Admin",
-				text: `${player.name} has left.`,
-			});
-			io.to(player.room).emit("roomData", {
-				room: player.room,
-				players: getPlayersInRoom(player.room),
-			});
-		}
+		console.log("player left");
 	});
 });
 
-server.listen(port, () => console.log(`Listening on port ${port}`));
+app.use(router);
+
+server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
