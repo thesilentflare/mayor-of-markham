@@ -19,10 +19,15 @@ const Lobby = ({ location }) => {
 		setName(name);
 		setRoom(room);
 
-		socket.emit("join", { name, room }, () => {});
+		socket.emit("join", { name, room }, (error) => {
+			if (error) {
+				window.location.replace("http://localhost:3000/join");
+				alert(error);
+			};
+		});
 
 		return () => {
-			socket.emit("disconnect");
+			socket.emit("disconnect", { name, room }, () => {});
 			socket.off();
 		};
 	}, [ENDPOINT, location.search]);
@@ -35,12 +40,12 @@ const Lobby = ({ location }) => {
 
 	const sendMsg = (event) => {
 		event.preventDefault();
-		if (msg){
-			socket.emit('sendMsg', msg, () => setMsg(''));
+		if (msg) {
+			socket.emit("sendMsg", msg, () => setMsg(""));
 		}
-	}
+	};
 
-	console.log(msg, msgs)
+	console.log(msg, msgs);
 	return (
 		<div className="outerCont">
 			<div className="cont">

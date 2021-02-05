@@ -5,9 +5,9 @@ import queryString from "query-string";
 const Join = ({ location }) => {
 	const [name, setName] = useState("");
 	const [room, setRoom] = useState("");
-  const urlRoom = queryString.parse(location.search);
+	const urlRoom = queryString.parse(location.search);
 	//console.log(urlRoom);
-  // still need to fix joining given url room
+	// still need to fix joining given url room
 	return (
 		<div className="joinOuterContainer">
 			<div className="joinInnerContainer">
@@ -17,13 +17,16 @@ const Join = ({ location }) => {
 						placeholder="Name"
 						className="joinInput"
 						type="text"
-						onChange={(event) => setName(event.target.value)}
+						onChange={(event) => {
+              setName(event.target.value);
+              setRoom(urlRoom.room);
+						}}
 					/>
 				</div>
 				<div>
 					<input
 						placeholder="Room Code"
-						value={urlRoom ? urlRoom.room : ""}
+						value={urlRoom.room}
 						className="joinInput mt-20"
 						type="text"
 						onChange={(event) => setRoom(event.target.value)}
