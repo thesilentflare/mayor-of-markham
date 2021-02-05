@@ -44,8 +44,12 @@ io.on("connection", (socket) => {
 		cb();
 	});
 
-	socket.on("disconnect", () => {
+	socket.on("disconnect", (name, cb) => {
 		console.log("player left");
+		const player = removePlayer(socket.id);
+		if (player){
+			io.to(player.room).emit('message', {player: "admin", text: `${player.name} has left`})
+		}
 	});
 });
 

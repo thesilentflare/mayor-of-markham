@@ -1,4 +1,5 @@
 const players = [];
+const rooms = [];
 
 const addPlayer = ({ id, name, room }) => {
 	name = name.trim().toLowerCase();
@@ -13,10 +14,14 @@ const addPlayer = ({ id, name, room }) => {
 	if (!name || !room) return { error: "Username and room are required." };
 	if (existingPlayer) return { error: "Username is taken." };
 	if (numPlayersInRoom == 4) return { error: "Room is full." };
+	if (getRoom(room).length === 0) return { error: "Room DNE" };
+	console.log(getRoom(room));
 
 	const player = { id, name, room };
+	const rm = { room, players };
 
 	players.push(player);
+	rooms.push(rm);
 
 	return { player };
 };
@@ -32,4 +37,12 @@ const getPlayer = (id) => players.find((player) => player.id === id);
 const getPlayersInRoom = (room) =>
 	players.filter((player) => player.room === room);
 
-module.exports = { addPlayer, removePlayer, getPlayer, getPlayersInRoom };
+const getRoom = (room) => rooms.filter((room) => room.room === room);
+
+module.exports = {
+	addPlayer,
+	removePlayer,
+	getPlayer,
+	getPlayersInRoom,
+	getRoom,
+};
