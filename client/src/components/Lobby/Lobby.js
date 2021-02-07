@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import queryString from "query-string";
 import io from "socket.io-client";
+import Messages from "../Messages/Messages";
 
 let socket;
 
@@ -10,20 +11,22 @@ const Lobby = ({ location }) => {
 	const [room, setRoom] = useState("");
 	const [msg, setMsg] = useState("");
 	const [msgs, setMsgs] = useState([]);
+	const [creator, setCreator] = useState("false");
 
 	useEffect(() => {
-		const { name, room } = queryString.parse(location.search);
+		const { name, room, creator } = queryString.parse(location.search);
 
 		socket = io(ENDPOINT);
 
 		setName(name);
 		setRoom(room);
+		setCreator(creator);
 
-		socket.emit("join", { name, room }, (error) => {
+		socket.emit("join", { name, room, creator }, (error) => {
 			if (error) {
 				window.location.replace("http://localhost:3000/join");
 				alert(error);
-			};
+			}
 		});
 
 		return () => {
@@ -49,6 +52,7 @@ const Lobby = ({ location }) => {
 	return (
 		<div className="outerCont">
 			<div className="cont">
+				<Messages msgs={msgs} name={name} />
 				<input
 					value={msg}
 					onChange={(event) => setMsg(event.target.value)}

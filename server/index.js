@@ -21,9 +21,9 @@ const io = socketIO(server, {
 });
 
 io.on("connection", (socket) => {
-	socket.on("join", ({ name, room }, cb) => {
+	socket.on("join", ({ name, room, creator }, cb) => {
 		console.log(name, room);
-		const { error, player } = addPlayer({ id: socket.id, name, room });
+		const { error, player } = addPlayer({ id: socket.id, name, room, creator });
 		if (error) return cb(error);
 
 		socket.emit("message", {
@@ -40,6 +40,8 @@ io.on("connection", (socket) => {
 
 	socket.on("sendMsg", (msg, cb) => {
 		const player = getPlayer(socket.id);
+		// console.log(player);
+		// console.log(player.room);
 		io.to(player.room).emit("message", { player: player.name, text: msg });
 		cb();
 	});

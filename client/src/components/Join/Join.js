@@ -34,7 +34,7 @@ const Join = ({ location }) => {
 				</div>
 				<Link
 					onClick={(e) => (!name || !room ? e.preventDefault() : null)}
-					to={`/lobby?room=${room}&name=${name}`}
+					to={`/lobby?room=${room}&name=${name}&creator=false`}
 				>
 					<button className={"button mt-20"} type="submit">
 						Join Lobby

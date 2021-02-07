@@ -1,7 +1,7 @@
 const players = [];
 const rooms = [];
 
-const addPlayer = ({ id, name, room }) => {
+const addPlayer = ({ id, name, room, creator }) => {
 	name = name.trim().toLowerCase();
 	room = room.trim().toLowerCase();
 
@@ -14,7 +14,7 @@ const addPlayer = ({ id, name, room }) => {
 	if (!name || !room) return { error: "Username and room are required." };
 	if (existingPlayer) return { error: "Username is taken." };
 	if (numPlayersInRoom == 4) return { error: "Room is full." };
-	if (getRoom(room).length === 0) return { error: "Room DNE" };
+	if (getRoom(room).length === 0 && creator === 'false') return { error: "Lobby DNE" };
 	console.log(getRoom(room));
 
 	const player = { id, name, room };

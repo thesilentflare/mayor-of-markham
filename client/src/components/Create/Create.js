@@ -27,7 +27,7 @@ const Create = ({ location }) => {
             </div> */}
 				<Link
 					onClick={(e) => (!name ? e.preventDefault() : null)}
-					to={`/lobby?room=${room}&name=${name}`}
+					to={`/lobby?room=${room}&name=${name}&creator=true`}
 				>
 					<button className={"button mt-20"} type="submit">
 						Create New Lobby
