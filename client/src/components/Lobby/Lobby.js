@@ -60,6 +60,7 @@ const Lobby = ({ location }) => {
 						event.key === "Enter" ? sendMsg(event) : null
 					}
 				/>
+				{creator === "true" ? <div>start</div> : null}
 			</div>
 		</div>
 	);

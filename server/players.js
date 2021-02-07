@@ -8,21 +8,24 @@ const addPlayer = ({ id, name, room, creator }) => {
 	const existingPlayer = players.find(
 		(player) => player.room === room && player.name === name
 	);
+	const existingRoom = rooms.find((room) => room.room === room);
+
 	const numPlayersInRoom = getPlayersInRoom(room).length;
 	console.log(numPlayersInRoom);
 
 	if (!name || !room) return { error: "Username and room are required." };
 	if (existingPlayer) return { error: "Username is taken." };
 	if (numPlayersInRoom == 4) return { error: "Room is full." };
-	if (getRoom(room).length === 0 && creator === 'false') return { error: "Lobby DNE" };
-	console.log(getRoom(room));
+	// if (getRoom(room) && creator === "false") return { error: "Lobby DNE" };
 
 	const player = { id, name, room };
 	const rm = { room, players };
 
 	players.push(player);
 	rooms.push(rm);
-
+	console.log("players", players);
+	console.log("rooms", rooms);
+	console.log(existingRoom);
 	return { player };
 };
 
@@ -37,7 +40,7 @@ const getPlayer = (id) => players.find((player) => player.id === id);
 const getPlayersInRoom = (room) =>
 	players.filter((player) => player.room === room);
 
-const getRoom = (room) => rooms.filter((room) => room.room === room);
+const getRoom = (rm) => rooms.find((room) => room.room === room);
 
 module.exports = {
 	addPlayer,
