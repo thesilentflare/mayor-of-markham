@@ -1,0 +1,12 @@
+.lobbyCont{
+    display: flex;
+    flex-direction: row;
+}
+.chatCont{
+    height: 40rem;
+}
+.gameCont{
+    height: 40rem;
+    width: 50%;
+    border: 1px solid black;
+}

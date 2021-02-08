@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import queryString from "query-string";
 import io from "socket.io-client";
 import Messages from "../Messages/Messages";
+import "./Lobby.css";
 
 let socket;
 
@@ -45,9 +46,9 @@ const Lobby = ({ location }) => {
 	}, [msgs]);
 
 	useEffect(() => {
-		socket.on("changeLeader", (change) =>{
+		socket.on("changeLeader", (change) => {
 			setCreator("true");
-		})
+		});
 	});
 
 	const sendMsg = (event) => {
@@ -61,18 +62,24 @@ const Lobby = ({ location }) => {
 	return (
 		<div className="outerCont">
 			<h1>LOBBY</h1>
-			<div className="cont">
-				<Messages msgs={msgs} name={name} />
-				<input
-					value={msg}
-					onChange={(event) => setMsg(event.target.value)}
-					onKeyPress={(event) =>
-						event.key === "Enter" ? sendMsg(event) : null
-					}
-				/>
-				{creator === "true" ? <div>Start Game</div> : null}
-				<div>Join Link: {joinLink}</div>
+			<div className="lobbyCont">
+				<div className="gameCont"></div>
+				<div className="chatCont">
+					<Messages msgs={msgs} name={name} />
+					<form>
+						<input
+							value={msg}
+							onChange={(event) => setMsg(event.target.value)}
+							onKeyPress={(event) =>
+								event.key === "Enter" ? sendMsg(event) : null
+							}
+						/>
+						<button onClick={(event) => sendMsg(event)}>SEND</button>
+					</form>
+				</div>
 			</div>
+			{creator === "true" ? <div>Start Game</div> : null}
+			<div>Join Link: {joinLink}</div>
 		</div>
 	);
 };
