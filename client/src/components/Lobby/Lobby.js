@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import queryString from "query-string";
 import io from "socket.io-client";
-import Messages from "../Messages/Messages";
+import Chat from "../Chat/Chat.js";
 import "./Lobby.css";
 
 let socket;
@@ -65,17 +65,13 @@ const Lobby = ({ location }) => {
 			<div className="lobbyCont">
 				<div className="gameCont"></div>
 				<div className="chatCont">
-					<Messages msgs={msgs} name={name} />
-					<form>
-						<input
-							value={msg}
-							onChange={(event) => setMsg(event.target.value)}
-							onKeyPress={(event) =>
-								event.key === "Enter" ? sendMsg(event) : null
-							}
-						/>
-						<button onClick={(event) => sendMsg(event)}>SEND</button>
-					</form>
+					<Chat
+						msg={msg}
+						msgs={msgs}
+						name={name}
+						setMsg={setMsg}
+						sendMsg={sendMsg}
+					/>
 				</div>
 			</div>
 			{creator === "true" ? <div>Start Game</div> : null}
