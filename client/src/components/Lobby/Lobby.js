@@ -6,12 +6,14 @@ import Messages from "../Messages/Messages";
 let socket;
 
 const Lobby = ({ location }) => {
-	const ENDPOINT = "localhost:5000";
+	const FRONTEND = "http://localhost:3000";
+	const ENDPOINT = "http://localhost:5000";
 	const [name, setName] = useState("");
 	const [room, setRoom] = useState("");
 	const [msg, setMsg] = useState("");
 	const [msgs, setMsgs] = useState([]);
 	const [creator, setCreator] = useState("false");
+	const [joinLink, setJoinLink] = useState("");
 
 	useEffect(() => {
 		const { name, room, creator } = queryString.parse(location.search);
@@ -21,10 +23,11 @@ const Lobby = ({ location }) => {
 		setName(name);
 		setRoom(room);
 		setCreator(creator);
+		setJoinLink(`${FRONTEND}/join?room=${room}`);
 
 		socket.emit("join", { name, room, creator }, (error) => {
 			if (error) {
-				window.location.replace("http://localhost:3000/join");
+				window.location.replace(`${FRONTEND}/join`);
 				alert(error);
 			}
 		});
@@ -51,6 +54,7 @@ const Lobby = ({ location }) => {
 	console.log(msg, msgs);
 	return (
 		<div className="outerCont">
+			<h1>LOBBY</h1>
 			<div className="cont">
 				<Messages msgs={msgs} name={name} />
 				<input
@@ -60,7 +64,8 @@ const Lobby = ({ location }) => {
 						event.key === "Enter" ? sendMsg(event) : null
 					}
 				/>
-				{creator === "true" ? <div>start</div> : null}
+				{creator === "true" ? <div>Start Game</div> : null}
+				<div>Join Link: {joinLink}</div>
 			</div>
 		</div>
 	);

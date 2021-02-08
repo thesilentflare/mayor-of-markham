@@ -1,4 +1,5 @@
 import React from "react";
+import './Message.css';
 
 const Message = ({ msg: { player, text }, name }) => {
 	let isSentByCurrentPlayer = false;
@@ -15,8 +16,8 @@ const Message = ({ msg: { player, text }, name }) => {
 
 	return isSentByCurrentPlayer ? (
 		<div className="msgCont">
-			<h1>{player}</h1>
-			<p>{text}</p>
+			<p className="msgSender msgSenderSelf">{player}: &nbsp;</p>
+			<p className="msgText">{text}</p>
 		</div>
 	) : isSentByAdmin ? (
 		<div className="msgCont">
@@ -24,8 +25,8 @@ const Message = ({ msg: { player, text }, name }) => {
 		</div>
 	) : (
 		<div className="msgCont">
-			<h5>{player}</h5>
-			<p>{text}</p>
+			<p className="msgSender">{player}: &nbsp;</p>
+			<p className="msgText">{text}</p>
 		</div>
 	);
 };

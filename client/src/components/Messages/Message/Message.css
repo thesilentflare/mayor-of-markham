@@ -1,0 +1,12 @@
+.msgCont{
+    display: flex;
+    flex-direction: row;
+    padding: 0 1rem;
+    height: 1.2rem;
+}
+.msgSender{
+    font-weight: bold;
+}
+.msgSenderSelf{
+    color: green;
+}
