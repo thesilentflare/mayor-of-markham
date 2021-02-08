@@ -44,6 +44,12 @@ const Lobby = ({ location }) => {
 		});
 	}, [msgs]);
 
+	useEffect(() => {
+		socket.on("changeLeader", (change) =>{
+			setCreator("true");
+		})
+	});
+
 	const sendMsg = (event) => {
 		event.preventDefault();
 		if (msg) {
