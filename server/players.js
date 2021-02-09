@@ -17,7 +17,8 @@ const addPlayer = ({ id, name, room, creator }) => {
 	if (numPlayersInRoom == 4) return { error: "Room is full." };
 	if (rooms.findIndex((r) => r.room === room) !== -1) {
 		// amend changes to list here
-		console.log("here");
+    console.log("here");
+    if (creator === "true") return {error: "Nice try Hot Shot."};
 		rooms[rooms.findIndex((r) => r.room === room)].numPlayers++;
 	} else {
     if (creator === "false") return { error: "Lobby DNE" };
@@ -41,12 +42,14 @@ const removePlayer = (id) => {
   let changeCreator = "false";
   let changeCreatorTo;
 	if (index !== -1) {
+    console.log("here1");
     room = players[index].room;
     changeCreator = players[index].creator;
 		rooms[rooms.findIndex((r) => r.room === room)].numPlayers--;
 		if (rooms[rooms.findIndex((r) => r.room === room)].numPlayers === 0) {
 			console.log("delete room");
       rooms.splice(rooms[rooms.findIndex((r) => r.room === room)], 1);
+      console.log("here2");
       return [null, null];
     }
     const removedPlayer = players.splice(index, 1)[0];
@@ -55,8 +58,12 @@ const removePlayer = (id) => {
       changeCreatorTo = players[indexNext];
       players[indexNext].creator = "true";
     }
+    console.log("here3");
 		return [removedPlayer, changeCreatorTo];
-	}
+  }
+  else{
+    return [null, null]
+  }
 };
 
 const getPlayer = (id) => players.find((player) => player.id === id);
