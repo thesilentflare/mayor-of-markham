@@ -15,6 +15,7 @@ const Lobby = ({ location }) => {
 	const [msgs, setMsgs] = useState([]);
 	const [creator, setCreator] = useState("false");
 	const [joinLink, setJoinLink] = useState("");
+	const [gameStart, setGameStart] = useState("false");
 
 	useEffect(() => {
 		const { name, room, creator } = queryString.parse(location.search);
@@ -58,6 +59,14 @@ const Lobby = ({ location }) => {
 		}
 	};
 
+	const gameStart = (event) => {
+		event.preventDefault();
+		socket.emit("sendStartGame", room, (error) => {
+			if (error) alert(error);
+			else setGameStart("true");
+		});
+	};
+
 	console.log(msg, msgs);
 	return (
 		<div className="outerCont">
@@ -74,7 +83,11 @@ const Lobby = ({ location }) => {
 					/>
 				</div>
 			</div>
-			{creator === "true" ? <div>Start Game</div> : null}
+			{creator === "true" ? (
+				<div>
+					<button onClick={(event) => gameStart(event)}>Start Game</button>
+				</div>
+			) : null}
 			<div>Join Link: {joinLink}</div>
 		</div>
 	);

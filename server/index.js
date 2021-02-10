@@ -9,6 +9,8 @@ const {
 	getPlayersInRoom,
 } = require("./players");
 
+const { startGame } = require("./Game/mayor");
+
 const PORT = process.env.PORT || 5000;
 const router = require("./router");
 
@@ -70,6 +72,20 @@ io.on("connection", (socket) => {
 				io.to(changeCreatorTo.id).emit("changeLeader", { changeCreatorTo });
 			}
 		}
+	});
+
+	socket.on("sendStartGame", (rounds, room, cb) => {
+		const player = getPlayer(socket.id);
+		const players = getPlayersInRoom(room);
+		const { error, game } = startGame(rounds, players);
+		if (error) return cb(error);
+		socket.broadcast
+			.to(player.room)
+			.emit("message", { player: "admin", text: `Game Has Started` });
+		socket.broadcast
+			.to(player.room)
+			.emit("gameStart", );
+		cb();
 	});
 });
 
