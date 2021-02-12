@@ -29,7 +29,7 @@ const io = socketIO(server, {
 
 io.on("connection", (socket) => {
 	socket.on("join", ({ name, room, creator }, cb) => {
-		console.log(name, room);
+		//console.log(name, room);
 		const { error, player } = addPlayer({ id: socket.id, name, room, creator });
 		if (error) return cb(error);
 
@@ -54,7 +54,7 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("disconnect", (name, cb) => {
-		console.log("player left");
+		//console.log("player left");
 		const [player, changeCreatorTo] = removePlayer(socket.id);
 		// isRoomEmpty(socket.id);
 		if (player) {
@@ -63,7 +63,7 @@ io.on("connection", (socket) => {
 				text: `${player.name} has left`,
 			});
 			if (changeCreatorTo !== "") {
-				console.log("change creator to", changeCreatorTo);
+				//console.log("change creator to", changeCreatorTo);
 				// send emit to frontend to change this persons display to lobby creator
 				io.to(changeCreatorTo.id).emit("message", {
 					player: "admin",
@@ -74,18 +74,13 @@ io.on("connection", (socket) => {
 		}
 	});
 
-	socket.on("sendStartGame", (rounds, room, cb) => {
+	socket.on("sendStartGame", ({ rounds, room }, cb) => {
+		//console.log(rounds);
 		const player = getPlayer(socket.id);
 		const players = getPlayersInRoom(room);
-		const { error, game } = startGame(rounds, players);
+		const { error, game } = startGame({ rounds, players, socket, player }, io);
 		if (error) return cb(error);
-		socket.broadcast
-			.to(player.room)
-			.emit("message", { player: "admin", text: `Game Has Started` });
-		socket.broadcast
-			.to(player.room)
-			.emit("gameStart", );
-		cb();
+		//cb();
 	});
 });
 

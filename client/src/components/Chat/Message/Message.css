@@ -8,5 +8,8 @@
     font-weight: bold;
 }
 .msgSenderSelf{
-    color: green;
+    color: red;
+}
+.adminText {
+    font-weight: bold;
 }

@@ -15,7 +15,7 @@ const Lobby = ({ location }) => {
 	const [msgs, setMsgs] = useState([]);
 	const [creator, setCreator] = useState("false");
 	const [joinLink, setJoinLink] = useState("");
-	const [gameStart, setGameStart] = useState("false");
+	const [gStart, setGStart] = useState("false");
 
 	useEffect(() => {
 		const { name, room, creator } = queryString.parse(location.search);
@@ -61,9 +61,9 @@ const Lobby = ({ location }) => {
 
 	const gameStart = (event) => {
 		event.preventDefault();
-		socket.emit("sendStartGame", room, (error) => {
+		socket.emit("sendStartGame", { rounds: "1", room }, (error) => {
 			if (error) alert(error);
-			else setGameStart("true");
+			else setGStart("true");
 		});
 	};
 
