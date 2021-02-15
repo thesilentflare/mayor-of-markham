@@ -1,3 +1,5 @@
+const { populateDeck, draw, discard } = require("./cards");
+
 let deck = [];
 let discardStack1 = [];
 let discardStack2 = [];
@@ -18,11 +20,15 @@ const startGame = ({ rounds, players, socket, player }, io) => {
 	// populate player points
 	playerQueue = players.map((players) => ({
 		...players,
-		points: 0,
+		money: 50,
+		hand: [],
+		inventory: [],
+		bag: [],
 	}));
 	console.log(playerQueue);
 
-	// populate card deck???
+	// populate card deck??? hasContra/hasRoyal options maybe??
+	deck = populateDeck(true, true);
 
 	// Main game LOOOP
 	for (i = 1; i <= rounds; i++) {
@@ -33,6 +39,12 @@ const startGame = ({ rounds, players, socket, player }, io) => {
 		});
 
 		// If first round everyone draws 6 cards default
+		for (j = 0; j < playerQueue.length; j++) {
+			playerQueue[j].hand = draw(deck, 6);
+		}
+
+		console.log("p1 start hand", playerQueue[0].hand);
+		console.log("p2 start hand", playerQueue[1].hand);
 
 		//Msg you are sheriff to sheriff at round start
 		io.to(playerQueue[sheriffIndex].id).emit("message", {
@@ -47,14 +59,25 @@ const startGame = ({ rounds, players, socket, player }, io) => {
 		for (j = 0; j < playerQueue.length; j++) {
 			// Only merchant players
 			if (j !== sheriffIndex) {
-				// Discard Action
-				io.to(playerQueue[j].id).emit("message", {
-					player: "admin",
-					text: "Discard",
-				});
-				// Draw Action
-				// Place into bag Action
+                // Discard only if not round 1
+				if (i !== 1) {
+					// Implement timer here
+						// Discard Action
+						io.to(playerQueue[j].id).emit("message", {
+							player: "admin",
+							text: "Discard",
+						});
+					
+				}
+				// Implement timer here
+					// Draw Action
+					io.to(playerQueue[j].id).emit("message", {
+						player: "admin",
+						text: "Draw",
+					});
+			
 			}
+			// Place into bag Action
 		}
 
 		// Start Check Phase
@@ -74,6 +97,11 @@ const startGame = ({ rounds, players, socket, player }, io) => {
 	// Send winner info
 
 	return { player };
+};
+
+const payTo = (toIndex, fromIndex, amount) =>{
+    playerQueue[fromIndex].money = playerQueue[fromIndex].money - amount;
+    playerQueue[toIndex].money = playerQueue[toIndex].money + amount;
 };
 
 module.exports = {
