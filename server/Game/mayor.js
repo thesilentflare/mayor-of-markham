@@ -43,8 +43,8 @@ const startGame = ({ rounds, players, socket, player }, io) => {
 			playerQueue[j].hand = draw(deck, 6);
 		}
 
-		console.log("p1 start hand", playerQueue[0].hand);
-		console.log("p2 start hand", playerQueue[1].hand);
+		//console.log("p1 start hand", playerQueue[0].hand);
+		//console.log("p2 start hand", playerQueue[1].hand);
 
 		//Msg you are sheriff to sheriff at round start
 		io.to(playerQueue[sheriffIndex].id).emit("message", {
@@ -56,26 +56,56 @@ const startGame = ({ rounds, players, socket, player }, io) => {
 		// somehow figure out how to msg wait to those that is not their turn
 
 		// Loop tru merchant players
-		for (j = 0; j < playerQueue.length; j++) {
+		for (m = 0; m < playerQueue.length - 1; m++) {
+			console.log("player", m);
 			// Only merchant players
-			if (j !== sheriffIndex) {
-                // Discard only if not round 1
+			if (m !== sheriffIndex) {
+				// Discard only if not round 1
+				let discardActionReceived = false;
 				if (i !== 1) {
+					// Discard Action
+					io.to(playerQueue[m].id).emit("message", {
+						player: "admin",
+						text: "Your turn to Discard",
+					});
 					// Implement timer here
-						// Discard Action
-						io.to(playerQueue[j].id).emit("message", {
-							player: "admin",
-							text: "Discard",
-						});
-					
+					let timeleft = 30;
+					socket.on("discardSend", (hand, index, discardStack) => {
+						let newHand = discard(hand, index, discardStack);
+						socket.emit("updateHand", { newHand });
+					});
+					// on end turn
+					socket.on("discardFinished", () => {
+						discardActionReceived = true;
+					});
+					var discardTimer = setInterval(() => {
+						// update timer
+						console.log("timer:", timeleft);
+						console.log("m", m);
+						console.log("pq", playerQueue[m]);
+						io.to(playerQueue[m].room).emit("timerCount", timeleft);
+						// on discardAction
+						if (timeleft <= 0 || discardActionReceived) {
+							if (!discardActionReceived) {
+								io.to(playerQueue[m].id).emit("message", {
+									player: "admin",
+									text: "Ran Out of Time",
+								});
+								discardActionReceived = true;
+							}
+							clearInterval(discardTimer);
+						}
+						timeleft--;
+					}, 1000);
 				}
 				// Implement timer here
-					// Draw Action
-					io.to(playerQueue[j].id).emit("message", {
+				// Draw Action
+				if (discardActionReceived) {
+					io.to(playerQueue[m].id).emit("message", {
 						player: "admin",
 						text: "Draw",
 					});
-			
+				}
 			}
 			// Place into bag Action
 		}
@@ -99,9 +129,9 @@ const startGame = ({ rounds, players, socket, player }, io) => {
 	return { player };
 };
 
-const payTo = (toIndex, fromIndex, amount) =>{
-    playerQueue[fromIndex].money = playerQueue[fromIndex].money - amount;
-    playerQueue[toIndex].money = playerQueue[toIndex].money + amount;
+const payTo = (toIndex, fromIndex, amount) => {
+	playerQueue[fromIndex].money = playerQueue[fromIndex].money - amount;
+	playerQueue[toIndex].money = playerQueue[toIndex].money + amount;
 };
 
 module.exports = {

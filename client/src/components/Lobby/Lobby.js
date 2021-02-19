@@ -61,7 +61,7 @@ const Lobby = ({ location }) => {
 
 	const gameStart = (event) => {
 		event.preventDefault();
-		socket.emit("sendStartGame", { rounds: "1", room }, (error) => {
+		socket.emit("sendStartGame", { rounds: "2", room }, (error) => {
 			if (error) alert(error);
 			else setGStart("true");
 		});

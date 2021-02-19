@@ -80,11 +80,11 @@ const draw = (deck, amount) => {
     return draws;
 };
 
-const discard = (discard, index, amount, discardStack) => {
+const discard = (hand, index, discardStack) => {
     for (var i = 1; i <= amount; i++){
-        discardStack.push(discard.pop(index));
+        discardStack.push(hand.pop(index));
     }
-    return discard;
+    return hand;
 };
 module.exports = {
     draw,
